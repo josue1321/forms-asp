@@ -1,0 +1,134 @@
+﻿@model WebApplication1.Models.Formulario
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary font-weight-bold">Dados do cadastro</h2>
+    <form asp-action="Create">
+        <fieldset class="border p-4">
+            <legend class="w-auto">Dados pessoais</legend>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="nome" class="control-label">Nome Completo</label>
+                <input asp-for="nome" class="form-control" placeholder="Nome Completo" />
+                <span asp-validation-for="nome" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="dataNasc" class="control-label">Nascimento</label>
+                    <input asp-for="dataNasc" class="form-control" placeholder="dd/mm/aaaa" />
+                    <span asp-validation-for="dataNasc" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="telefone" class="control-label">Contato</label>
+                    <input asp-for="telefone" class="form-control" placeholder="(XX) XXXXX-XXXX" />
+                    <span asp-validation-for="telefone" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="email" class="control-label">E-mail</label>
+                <input asp-for="email" class="form-control" placeholder="E-mail" />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+        </fieldset>
+        <fieldset class="border p-4 mt-4">
+            <legend class="w-auto">Endereço</legend>
+            <div class="form-group">
+                <label asp-for="cep" class="control-label">CEP</label>
+                <input asp-for="cep" class="form-control" placeholder="CEP" id="cep" />
+                <span asp-validation-for="cep" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="endereco" class="control-label">Endereço</label>
+                <input asp-for="endereco" class="form-control" placeholder="Endereço" id="endereco" readonly />
+                <span asp-validation-for="endereco" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="numero" class="control-label">Numero</label>
+                    <input asp-for="numero" class="form-control" placeholder="Numero" id="numero" />
+                    <span asp-validation-for="numero" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="complemento" class="control-label">Complemento</label>
+                    <input asp-for="complemento" class="form-control" placeholder="Complemento" id="complemento" />
+                    <span asp-validation-for="complemento" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="bairro" class="control-label">Bairro</label>
+                <input asp-for="bairro" class="form-control" placeholder="Bairro" id="bairro" readonly />
+                <span asp-validation-for="bairro" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label asp-for="cidade" class="control-label">Cidade</label>
+                    <input asp-for="cidade" class="form-control" placeholder="Cidade" id="cidade" readonly />
+                    <span asp-validation-for="cidade" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="uf" class="control-label">UF</label>
+                    <select asp-for="uf" class="form-control" id="uf">
+                        <option selected>Escolher...</option>
+                        <option>AC</option>
+                        <option>AL</option>
+                        <option>AP</option>
+                        <option>AM</option>
+                        <option>BA</option>
+                        <option>CE</option>
+                        <option>DF</option>
+                        <option>ES</option>
+                        <option>GO</option>
+                        <option>MA</option>
+                        <option>MT</option>
+                        <option>MS</option>
+                        <option>MG</option>
+                        <option>PA</option>
+                        <option>PB</option>
+                        <option>PR</option>
+                        <option>PE</option>
+                        <option>PI</option>
+                        <option>RJ</option>
+                        <option>RN</option>
+                        <option>RS</option>
+                        <option>RO</option>
+                        <option>RR</option>
+                        <option>SC</option>
+                        <option>SP</option>
+                        <option>SE</option>
+                        <option>TO</option>
+                    </select>
+                    <span asp-validation-for="uf" class="text-danger"></span>
+                </div>
+            </div>
+        </fieldset>
+        <button type="submit" class="btn btn-primary text-light font-weight-bold btn-block mt-4 btn-lg">Enviar formulário</button>
+    </form>
+</div>
+<script>
+    document.getElementById('cep').addEventListener('blur', function () {
+        var cep = this.value.replace(/\D/g, '');
+        if (cep.length === 8) {
+            var script = document.createElement('script');
+            script.src = 'https://viacep.com.br/ws/' + cep + '/json/?callback=preencherFormulario';
+            document.body.appendChild(script);
+        }
+    });
+
+    function preencherFormulario(conteudo) {
+        if (!('erro' in conteudo)) {
+            document.getElementById('endereco').value = conteudo.logradouro;
+            document.getElementById('bairro').value = conteudo.bairro;
+            document.getElementById('cidade').value = conteudo.localidade;
+            document.getElementById('uf').value = conteudo.uf;
+        } else {
+            alert('CEP não encontrado.');
+        }
+    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
